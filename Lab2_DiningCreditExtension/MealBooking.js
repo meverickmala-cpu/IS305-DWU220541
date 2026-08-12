@@ -1,12 +1,18 @@
 /*
-  Program: Dining Meal Booking Feature
+  Program: Dining Meal Booking Feature — Lab 2 Credit Extension
   Student Name: Vincent MALA
   Student ID: 220541
-  Date: 04 August 2026
+  Date: 09 August 2026
   Description: A JavaScript class demonstrating classes, objects, constructors,
   private fields, getters/setters and methods for the DWU Dining Meal Booking
-  feature. All booking data is held in memory only (no database is used).
+  feature. Lab 2 refactor: MealBooking no longer stores the student's ID and
+  name directly — instead it receives and stores a reference to a Student
+  object, so the same Student can be connected to several bookings without
+  duplicating their details. All booking data is held in memory only
+  (no database is used).
 */
+
+const Student = require("./Student");
 
 const MEAL_PRICES = {
   Breakfast: 10.0,
@@ -15,17 +21,19 @@ const MEAL_PRICES = {
 };
 
 class MealBooking {
-  #studentId;
-  #studentName;
+  #student;
   #mealDate;
   #mealType;
   #quantity;
   #dietaryNote;
   #bookingStatus;
 
-  constructor({ studentId, studentName, mealDate, mealType, quantity, dietaryNote }) {
-    this.#studentId = studentId;
-    this.#studentName = studentName;
+  constructor({ student, mealDate, mealType, quantity, dietaryNote }) {
+    if (!(student instanceof Student)) {
+      throw new Error("A valid Student object is required to create a booking.");
+    }
+
+    this.#student = student;
     this.#mealDate = mealDate;
     this.#mealType = mealType;
     this.#quantity = quantity;
@@ -34,12 +42,14 @@ class MealBooking {
   }
 
   // ---------- Getters ----------
-  get studentId() {
-    return this.#studentId;
+  get student() {
+    return this.#student;
   }
 
-  get studentName() {
-    return this.#studentName;
+  // Convenience passthrough so existing lookups (e.g. duplicate checks)
+  // can still compare by student ID without reaching into #student directly.
+  get studentId() {
+    return this.#student.studentId;
   }
 
   get mealDate() {
@@ -63,11 +73,11 @@ class MealBooking {
   }
 
   // ---------- Setters ----------
-  set studentName(name) {
-    if (!name || name.trim() === "") {
-      throw new Error("Student name cannot be empty.");
+  set student(student) {
+    if (!(student instanceof Student)) {
+      throw new Error("A valid Student object is required.");
     }
-    this.#studentName = name;
+    this.#student = student;
   }
 
   set mealDate(date) {
@@ -101,11 +111,8 @@ class MealBooking {
   validate() {
     const errors = [];
 
-    if (!this.#studentId || this.#studentId.toString().trim() === "") {
-      errors.push("Student ID is required.");
-    }
-    if (!this.#studentName || this.#studentName.trim() === "") {
-      errors.push("Student name is required.");
+    if (!(this.#student instanceof Student)) {
+      errors.push("A valid Student object is required.");
     }
     if (!this.#mealDate || this.#mealDate.trim() === "") {
       errors.push("Meal date is required.");
@@ -148,14 +155,15 @@ class MealBooking {
     return this.#bookingStatus;
   }
 
-  // Returns a clear booking receipt.
+  // Returns a clear booking receipt, pulling the student's current details
+  // from the connected Student object.
   getSummary() {
     const total = this.calculateTotal().toFixed(2);
     return (
       "==========================================\n" +
       "              BOOKING RECEIPT\n" +
       "==========================================\n" +
-      `Student: ${this.#studentName} (${this.#studentId})\n` +
+      `Student: ${this.#student.getFullName()} (${this.#student.studentId})\n` +
       `Meal: ${this.#mealType} x ${this.#quantity}\n` +
       `Date: ${this.#mealDate}\n` +
       `Dietary note: ${this.#dietaryNote}\n` +
