@@ -1,15 +1,16 @@
 /*
-  Program: Dining Meal Booking Feature — Lab 2 Credit Extension
+  Program: Dining Meal Booking Feature — Lab 3 Distinction Extension
   Student Name: Vincent MALA
   Student ID: 220541
-  Date: 09 August 2026
+  Date: 09 September 2026
   Description: A JavaScript class demonstrating classes, objects, constructors,
   private fields, getters/setters and methods for the DWU Dining Meal Booking
-  feature. Lab 2 refactor: MealBooking no longer stores the student's ID and
-  name directly — instead it receives and stores a reference to a Student
-  object, so the same Student can be connected to several bookings without
-  duplicating their details. All booking data is held in memory only
-  (no database is used).
+  feature. MealBooking stores a reference to a Student object (Lab 2) so the
+  same Student can be connected to several bookings without duplicating their
+  details. Lab 3 adds processPayment(), which routes payment through whichever
+  DiningAccount subtype is connected to the student, without knowing or caring
+  which subtype it is — this is the polymorphic part of the assignment. All
+  booking data is held in memory only (no database is used).
 */
 
 const Student = require("./Student");
@@ -27,6 +28,7 @@ class MealBooking {
   #quantity;
   #dietaryNote;
   #bookingStatus;
+  #isPaid;
 
   constructor({ student, mealDate, mealType, quantity, dietaryNote }) {
     if (!(student instanceof Student)) {
@@ -39,6 +41,7 @@ class MealBooking {
     this.#quantity = quantity;
     this.#dietaryNote = dietaryNote && dietaryNote.trim() !== "" ? dietaryNote : "None";
     this.#bookingStatus = "Pending"; // default status
+    this.#isPaid = false;
   }
 
   // ---------- Getters ----------
@@ -70,6 +73,10 @@ class MealBooking {
 
   get bookingStatus() {
     return this.#bookingStatus;
+  }
+
+  get isPaid() {
+    return this.#isPaid;
   }
 
   // ---------- Setters ----------
@@ -140,6 +147,49 @@ class MealBooking {
     return price * this.#quantity;
   }
 
+  // Processes payment for this booking through the supplied dining
+  // account. Works with a DiningAccount, RewardsDiningAccount or
+  // CreditDiningAccount interchangeably — this method only ever calls
+  // diningAccount.payForMeal(), and lets each subclass's own overridden
+  // version decide whether the payment succeeds. MealBooking never
+  // branches on account subtype, which is what makes this polymorphic.
+  processPayment(diningAccount) {
+    if (this.#isPaid || this.#bookingStatus === "Confirmed") {
+      return {
+        success: false,
+        message: "This booking has already been paid for. Duplicate payment blocked.",
+      };
+    }
+
+    if (this.#bookingStatus === "Cancelled") {
+      return {
+        success: false,
+        message: "Cannot pay for a cancelled booking.",
+      };
+    }
+
+    const total = this.calculateTotal();
+    const description = `${this.#mealType} booking x${this.#quantity} (${this.#mealDate})`;
+    const paymentSucceeded = diningAccount.payForMeal(total, description);
+
+    if (paymentSucceeded) {
+      this.#isPaid = true;
+      this.confirmBooking();
+      return {
+        success: true,
+        message: "Payment successful. Booking confirmed.",
+        amountCharged: total,
+      };
+    }
+
+    // Payment failed — booking stays Pending, nothing is charged.
+    return {
+      success: false,
+      message: "Payment rejected: insufficient funds or credit limit exceeded. Booking remains Pending.",
+      amountCharged: 0,
+    };
+  }
+
   // Changes the booking status from Pending to Confirmed.
   confirmBooking() {
     if (this.#bookingStatus === "Cancelled") {
@@ -168,6 +218,7 @@ class MealBooking {
       `Date: ${this.#mealDate}\n` +
       `Dietary note: ${this.#dietaryNote}\n` +
       `Status: ${this.#bookingStatus}\n` +
+      `Paid: ${this.#isPaid ? "Yes" : "No"}\n` +
       `Total cost: K${total}\n` +
       "=========================================="
     );
