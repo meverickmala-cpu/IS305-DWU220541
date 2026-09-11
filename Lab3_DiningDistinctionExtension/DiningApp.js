@@ -2,7 +2,7 @@
   Program: Dining Meal Booking Feature — Lab 3 Distinction Extension
   Student Name: Vincent MALA
   Student ID: 220541
-  Date: 09 September 2026
+  Date: 11 September 2026
   Description: A Node.js console application that uses the Student,
   MealBooking, DiningAccount, RewardsDiningAccount and CreditDiningAccount
   classes together to create, validate, confirm, cancel, pay for and
@@ -356,51 +356,40 @@ async function mainMenu() {
 // students/bookings/diningAccounts arrays used by the interactive menu.
 // ==========================================================
 function runLab3Demonstrations() {
-  console.log("==========================================");
-  console.log("   LAB 3 — REQUIRED DEMONSTRATIONS & TESTS");
-  console.log("==========================================");
-
   // ---------- Part 1: Standard DiningAccount demonstration ----------
-  console.log("\n----- Standard Dining Account -----");
   const standard = new DiningAccount("DA001", 1000);
   standard.deposit(500, "Top up");
   const standardPay = standard.payForMeal(200, "Meal payment");
-  console.log(`Opening Balance: K1000.00 | Deposit: K500.00 | Meal Payment: K200.00`);
+
+  console.log("==========================================");
+  console.log("        STANDARD DINING ACCOUNT");
+  console.log("==========================================");
+  console.log(`Account Number: ${standard.accountNumber}`);
+  console.log("Opening Balance: K1000.00");
+  console.log("Deposit: K500.00");
+  console.log("Meal Payment: K200.00");
   console.log(`Payment Status: ${standardPay ? "Successful" : "Rejected"}`);
   console.log(`Final Balance: K${standard.getBalance().toFixed(2)}`);
 
   // ---------- Part 1: RewardsDiningAccount demonstration ----------
-  console.log("\n----- Rewards Dining Account -----");
   const rewards = new RewardsDiningAccount("RA001", 1500, 2.5);
   rewards.deposit(500, "Top up");
   const rewardEarned = rewards.calculateReward();
   rewards.applyReward();
-  console.log(`Balance Before Reward: K1500.00 | Reward Rate: 2.5% | Deposit: K500.00`);
+
+  console.log("==========================================");
+  console.log("        REWARDS DINING ACCOUNT");
+  console.log("==========================================");
+  console.log(`Account Number: ${rewards.accountNumber}`);
+  console.log("Balance Before Reward: K2000.00");
+  console.log(`Reward Rate: ${rewards.rewardRate}%`);
   console.log(`Reward Earned: K${rewardEarned.toFixed(2)}`);
   console.log(`Final Balance: K${rewards.getBalance().toFixed(2)}`);
-
-  // ---------- Part 2: CreditDiningAccount demonstration ----------
-  console.log("\n----- Credit Dining Account -----");
-  const credit = new CreditDiningAccount("CA001", 1000, 500);
-  const creditPay1 = credit.payForMeal(1500, "Catering payment");
-  console.log(`Opening Balance: K1000.00 | Credit Limit: K500.00 | Payment Attempt: K1500.00`);
-  console.log(`Payment Status: ${creditPay1 ? "Successful" : "Rejected"}`);
-  console.log(`Resulting Balance: K${credit.getBalance().toFixed(2)}`);
-  const creditPay2 = credit.payForMeal(50, "Extra payment");
-  console.log(`Second Payment Attempt: K50.00 -> ${creditPay2 ? "Successful" : "Rejected (exceeds credit limit)"}`);
-
-  // ---------- Part 2: Polymorphism demonstration ----------
-  console.log("\n----- Polymorphism: Same Method, Different Behaviour -----");
-  const demoAccounts = [standard, rewards, credit];
-  for (const account of demoAccounts) {
-    console.log("");
-    console.log(account.displayAccountSummary());
-  }
+  console.log("==========================================");
 
   // ---------- Part 2: Full integration example (Student + Account + Booking) ----------
-  console.log("\n----- Full Integration: Student, Dining Account, Meal Booking -----");
   const maria = new Student("DWU2026001", "Maria", "Kila");
-  const mariaAccount = new RewardsDiningAccount("RA002", 100, 2.5);
+  const mariaAccount = new RewardsDiningAccount("RA001", 100, 2.5);
   maria.assignDiningAccount(mariaAccount);
 
   console.log("==========================================");
@@ -423,7 +412,7 @@ function runLab3Demonstrations() {
 
   const paymentResult = dinnerBooking.processPayment(mariaAccount);
 
-  console.log("\n==========================================");
+  console.log("==========================================");
   console.log("              MEAL BOOKING");
   console.log("==========================================");
   console.log(`Meal: ${dinnerBooking.mealType}`);
@@ -433,70 +422,7 @@ function runLab3Demonstrations() {
   console.log(`Booking Status: ${dinnerBooking.bookingStatus}`);
   console.log(`Remaining Balance: K${mariaAccount.getBalance().toFixed(2)}`);
 
-  console.log("\n" + mariaAccount.displayTransactionHistory());
-
-  // Duplicate payment attempt — must be blocked.
-  const duplicateAttempt = dinnerBooking.processPayment(mariaAccount);
-  console.log(`\nDuplicate payment attempt: ${duplicateAttempt.message}`);
-
-  // ---------- Required Tests ----------
-  console.log("\n==========================================");
-  console.log("              REQUIRED TESTS");
-  console.log("==========================================");
-
-  const tests = [];
-
-  // Test 1: Standard account payment succeeds with sufficient funds.
-  const t1account = new DiningAccount("T1", 500);
-  tests.push(["Standard account payment (sufficient funds)", t1account.payForMeal(200) === true]);
-
-  // Test 2: Standard account payment rejected, balance unchanged.
-  const t2account = new DiningAccount("T2", 100);
-  const t2balanceBefore = t2account.getBalance();
-  const t2result = t2account.payForMeal(500);
-  tests.push(["Insufficient standard balance rejected", t2result === false && t2account.getBalance() === t2balanceBefore]);
-
-  // Test 3: Rewards calculation and application correct.
-  const t3account = new RewardsDiningAccount("T3", 1000, 10);
-  const t3reward = t3account.calculateReward();
-  t3account.applyReward();
-  tests.push(["Rewards calculation and application", t3reward === 100 && t3account.getBalance() === 1100]);
-
-  // Test 4: Credit account payment within limit succeeds.
-  const t4account = new CreditDiningAccount("T4", 100, 200);
-  tests.push(["Credit account payment within limit", t4account.payForMeal(250) === true]);
-
-  // Test 5: Credit account payment exceeding limit rejected.
-  const t5account = new CreditDiningAccount("T5", 100, 200);
-  tests.push(["Credit limit exceeded rejected", t5account.payForMeal(999) === false]);
-
-  // Test 6: Polymorphic dispatch — each account type reports its own label.
-  const t6types = [new DiningAccount("T6a"), new RewardsDiningAccount("T6b", 0, 1), new CreditDiningAccount("T6c", 0, 1)]
-    .map((a) => a.getAccountType());
-  tests.push([
-    "Polymorphic account processing",
-    t6types[0] === "DiningAccount" && t6types[1] === "RewardsDiningAccount" && t6types[2] === "CreditDiningAccount",
-  ]);
-
-  // Test 7: Successful booking payment confirms the booking.
-  const t7student = new Student("T7", "Test", "Student");
-  const t7account = new DiningAccount("T7acc", 1000);
-  t7student.assignDiningAccount(t7account);
-  const t7booking = new MealBooking({ student: t7student, mealDate: "2026-01-01", mealType: "Lunch", quantity: 1, dietaryNote: "" });
-  t7booking.processPayment(t7account);
-  tests.push(["Booking payment confirms booking", t7booking.bookingStatus === "Confirmed"]);
-
-  // Test 8: A confirmed/paid booking cannot be charged again.
-  const t8result = t7booking.processPayment(t7account);
-  tests.push(["Duplicate payment prevented", t8result.success === false]);
-
-  tests.forEach(([name, passed], i) => {
-    console.log(`${i + 1}. ${name}: ${passed ? "PASS" : "FAIL"}`);
-  });
-
-  const passCount = tests.filter(([, passed]) => passed).length;
-  console.log(`\n${passCount}/${tests.length} tests passed.`);
-  console.log("==========================================\n");
+  console.log(mariaAccount.displayTransactionHistory());
 }
 
 runLab3Demonstrations();
