@@ -164,7 +164,7 @@ Additional manual checks:
 | `RewardsDiningAccount.js` | Extends `DiningAccount`; adds `#rewardRate`, `calculateReward()`, `applyReward()`. |
 | `CreditDiningAccount.js` | Extends `DiningAccount`; adds `#creditLimit`, overrides `payForMeal()`. |
 | `DiningApp.js` | Console application; adds account creation/assignment, booking payment, and an automatic demonstration/test run on startup. |
-| `Lab3Part1Demo.js` | Standalone script reproducing the two required Part 1 demonstrations. |
+| `Lab3Tests.js` | Standalone script produce for testing. |
 | `README.md` | This file. |
 
 ## How to Run
