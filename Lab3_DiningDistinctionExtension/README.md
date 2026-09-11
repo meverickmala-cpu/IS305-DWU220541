@@ -190,10 +190,10 @@ the 8 required tests, then opens the interactive menu:
 - **8** – Pay for a booking through the student's assigned account
 - **9** – Exit
 
-To see just the Part 1 demonstrations on their own:
+To see just the Lab 3 Testing:
 
 ```
-node Lab3Part1Demo.js
+node Lab3Tests.js
 ```
 
 ## Meal Prices
