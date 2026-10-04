@@ -23,6 +23,10 @@ class StaffRequester extends User {
   getDepartment() {
     return this.#department;
   }
+
+  toJSON() {
+    return { ...super.toJSON(), specialisedData: { department: this.#department } };
+  }
 }
 
 module.exports = StaffRequester;

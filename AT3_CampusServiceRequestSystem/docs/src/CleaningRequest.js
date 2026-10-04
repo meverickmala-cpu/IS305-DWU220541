@@ -67,7 +67,7 @@ class CleaningRequest extends ServiceRequest {
    * by one point above the base priority score.
    */
   calculatePriorityScore() {
-    const baseScore = super.calculatePriorityScore();
+    const baseScore = super.basePriorityScoreFromPriority();
     return this.#hygieneRisk === 'High' ? baseScore + 1 : baseScore;
   }
 
@@ -76,10 +76,11 @@ class CleaningRequest extends ServiceRequest {
    * compared to the base priority-driven target.
    */
   getTargetResolutionHours() {
+    const baseHours = super.baseTargetResolutionHoursFromPriority();
     if (this.#hygieneRisk === 'High') {
-      return Math.min(4, super.getTargetResolutionHours());
+      return Math.min(4, baseHours);
     }
-    return super.getTargetResolutionHours();
+    return baseHours;
   }
 
   /**
@@ -87,10 +88,25 @@ class CleaningRequest extends ServiceRequest {
    */
   getRequestSummary() {
     return (
-      `${super.getRequestSummary()} ` +
+      `${super.baseRequestSummary()} ` +
       `| Cleaning - Area: ${this.#cleaningArea}, Hygiene Risk: ${this.#hygieneRisk}, ` +
       `Service Type: ${this.#serviceType}, Preferred Time: ${this.#preferredServiceTime}`
     );
+  }
+
+  /**
+   * Overridden: adds Cleaning-specific fields for JSON persistence.
+   */
+  toJSON() {
+    return {
+      ...super.toJSON(),
+      specialisedData: {
+        cleaningArea: this.#cleaningArea,
+        hygieneRisk: this.#hygieneRisk,
+        serviceType: this.#serviceType,
+        preferredServiceTime: this.#preferredServiceTime,
+      },
+    };
   }
 }
 

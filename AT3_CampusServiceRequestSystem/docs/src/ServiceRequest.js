@@ -343,29 +343,106 @@ class ServiceRequest {
     }
   }
 
-  /**
-   * Calculates a numeric priority score from the request's priority level.
-   * Base implementation; specialised request classes override this to
-   * factor in their own risk/impact fields.
-   */
-  calculatePriorityScore() {
+  // --- Helpers available to subclasses (Distinction: abstract-style base) ---
+  // ServiceRequest is abstract-style: calculatePriorityScore(),
+  // getTargetResolutionHours() and getRequestSummary() below throw unless
+  // overridden. These three helpers give subclasses a priority-driven
+  // baseline to build on without duplicating the lookup tables.
+
+  basePriorityScoreFromPriority() {
     return PRIORITY_SCORES[this.#priority] || 0;
   }
 
-  /**
-   * Returns the target resolution time, in hours, based on priority.
-   * Base implementation; specialised request classes override this to
-   * factor in their own risk/impact fields.
-   */
-  getTargetResolutionHours() {
+  baseTargetResolutionHoursFromPriority() {
     return PRIORITY_TARGET_HOURS[this.#priority] || 48;
   }
 
-  getRequestSummary() {
+  baseRequestSummary() {
     return (
       `[${this.#requestId}] ${this.#title} (${this.#category}, Priority: ${this.#priority}) ` +
       `- Status: ${this.#status} - Submitted by: ${this.#requester.getFullName()}`
     );
+  }
+
+  /**
+   * Abstract-style method - every ServiceRequest subclass must override
+   * this. The base implementation throws a clear error if a subclass has
+   * not supplied its own behaviour.
+   */
+  calculatePriorityScore() {
+    throw new Error(
+      `calculatePriorityScore() is not implemented by ${this.constructor.name}. ` +
+        'Every ServiceRequest subclass must override this method.'
+    );
+  }
+
+  /**
+   * Abstract-style method - every ServiceRequest subclass must override
+   * this. The base implementation throws a clear error if a subclass has
+   * not supplied its own behaviour.
+   */
+  getTargetResolutionHours() {
+    throw new Error(
+      `getTargetResolutionHours() is not implemented by ${this.constructor.name}. ` +
+        'Every ServiceRequest subclass must override this method.'
+    );
+  }
+
+  /**
+   * Abstract-style method - every ServiceRequest subclass must override
+   * this. The base implementation throws a clear error if a subclass has
+   * not supplied its own behaviour.
+   */
+  getRequestSummary() {
+    throw new Error(
+      `getRequestSummary() is not implemented by ${this.constructor.name}. ` +
+        'Every ServiceRequest subclass must override this method.'
+    );
+  }
+
+  // --- Distinction: JSON persistence support ---
+
+  /**
+   * Restores persisted state onto a freshly constructed instance. Used
+   * only by ServiceRequestFactory when reloading saved data - it bypasses
+   * normal workflow transition validation because the object already
+   * legitimately progressed through valid transitions before being saved.
+   */
+  restoreState({ status, dateSubmitted, dateUpdated, assignedTechnician } = {}) {
+    if (status) this.#status = status;
+    if (dateSubmitted) this.#dateSubmitted = new Date(dateSubmitted);
+    if (dateUpdated) this.#dateUpdated = new Date(dateUpdated);
+    if (assignedTechnician !== undefined) this.#assignedTechnician = assignedTechnician;
+  }
+
+  /**
+   * Restores a request's history array (loaded separately from
+   * requestHistory.json) onto this instance.
+   */
+  restoreHistory(historyEntries = []) {
+    this.#history = historyEntries.map((h) => ({ ...h, dateTime: new Date(h.dateTime) }));
+  }
+
+  /**
+   * Plain-object representation of the request's common fields, suitable
+   * for JSON persistence. Subclasses override this to add their
+   * specialised fields, calling super.toJSON() first.
+   */
+  toJSON() {
+    return {
+      requestType: this.constructor.name,
+      requestId: this.#requestId,
+      requesterId: this.#requester ? this.#requester.getUserId() : null,
+      title: this.#title,
+      description: this.#description,
+      campusLocation: this.#campusLocation,
+      category: this.#category,
+      priority: this.#priority,
+      status: this.#status,
+      assignedTechnicianId: this.#assignedTechnician ? this.#assignedTechnician.getUserId() : null,
+      dateSubmitted: this.#dateSubmitted,
+      dateUpdated: this.#dateUpdated,
+    };
   }
 }
 

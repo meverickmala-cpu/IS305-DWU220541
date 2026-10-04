@@ -12,6 +12,7 @@ const ServiceRequest = require('./ServiceRequest.js');
 const ICTSupportRequest = require('./ICTSupportRequest.js');
 const MaintenanceRequest = require('./MaintenanceRequest.js');
 const CleaningRequest = require('./CleaningRequest.js');
+const GeneralServiceRequest = require('./GeneralServiceRequest.js');
 const ServiceRequestManager = require('./ServiceRequestManager.js');
 
 const rl = readline.createInterface({ input, output });
@@ -46,7 +47,9 @@ function printMenu() {
   console.log('16. Filter Requests');
   console.log('17. Sort Requests');
   console.log('18. View Request History');
-  console.log('19. Exit');
+  console.log('19. View Management Reports');
+  console.log('20. View Audit Log');
+  console.log('21. Exit');
   console.log('=====================================');
 }
 
@@ -86,7 +89,7 @@ async function registerUser() {
         // Administrator (or any other listed type without a dedicated subclass).
         user = new User(userId, firstName, lastName, email, userType);
     }
-    manager.registerUser(user);
+    await manager.registerUser(user);
     console.log(`User "${user.getFullName()}" registered successfully as ${user.getUserType()}.`);
   } catch (err) {
     console.log(`Error: ${err.message}`);
@@ -163,10 +166,10 @@ async function submitRequest() {
       }
       default:
         // General Campus Service (or any other listed category without a
-        // dedicated subclass) uses the base ServiceRequest class.
-        request = new ServiceRequest(commonRequestData);
+        // dedicated subclass).
+        request = new GeneralServiceRequest(commonRequestData);
     }
-    manager.submitRequest(request);
+    await manager.submitRequest(request);
     console.log(`Request submitted successfully with ID: ${request.getRequestId()}`);
   } catch (err) {
     requestCounter -= 1; // release unused ID on failed submission
@@ -217,7 +220,7 @@ async function updateMyRequest() {
   if (priority) changes.priority = priority;
 
   try {
-    manager.updateRequest(requestId, userId, changes);
+    await manager.updateRequest(requestId, userId, changes);
     console.log('Request updated successfully.');
   } catch (err) {
     console.log(`Error: ${err.message}`);
@@ -228,7 +231,7 @@ async function cancelMyRequest() {
   const userId = await rl.question('Your User ID: ');
   const requestId = await rl.question('Request ID to cancel: ');
   try {
-    manager.cancelRequest(requestId, userId);
+    await manager.cancelRequest(requestId, userId);
     console.log('Request cancelled successfully.');
   } catch (err) {
     console.log(`Error: ${err.message}`);
@@ -264,7 +267,7 @@ async function reviewRequest() {
   console.log(`Priorities: ${ServiceRequest.VALID_PRIORITIES.join(', ')}`);
   const priority = await rl.question('Set priority: ');
   try {
-    manager.reviewRequest(requestId, officerId, priority);
+    await manager.reviewRequest(requestId, officerId, priority);
     console.log('Request reviewed successfully.');
   } catch (err) {
     console.log(`Error: ${err.message}`);
@@ -276,7 +279,7 @@ async function assignTechnician() {
   const requestId = await rl.question('Request ID to assign: ');
   const technicianId = await rl.question('Technician User ID: ');
   try {
-    manager.assignTechnician(requestId, officerId, technicianId);
+    await manager.assignTechnician(requestId, officerId, technicianId);
     console.log('Technician assigned successfully.');
   } catch (err) {
     console.log(`Error: ${err.message}`);
@@ -287,7 +290,7 @@ async function beginWork() {
   const technicianId = await rl.question('Your User ID (Technician): ');
   const requestId = await rl.question('Request ID: ');
   try {
-    manager.beginWork(requestId, technicianId);
+    await manager.beginWork(requestId, technicianId);
     console.log('Work started on request.');
   } catch (err) {
     console.log(`Error: ${err.message}`);
@@ -299,7 +302,7 @@ async function recordProgress() {
   const requestId = await rl.question('Request ID: ');
   const note = await rl.question('Progress note: ');
   try {
-    manager.recordProgress(requestId, technicianId, note);
+    await manager.recordProgress(requestId, technicianId, note);
     console.log('Progress recorded.');
   } catch (err) {
     console.log(`Error: ${err.message}`);
@@ -311,7 +314,7 @@ async function resolveRequest() {
   const requestId = await rl.question('Request ID: ');
   const notes = await rl.question('Resolution notes: ');
   try {
-    manager.resolveRequest(requestId, technicianId, notes);
+    await manager.resolveRequest(requestId, technicianId, notes);
     console.log('Request resolved.');
   } catch (err) {
     console.log(`Error: ${err.message}`);
@@ -322,7 +325,7 @@ async function closeRequest() {
   const officerId = await rl.question('Your User ID (Service Officer): ');
   const requestId = await rl.question('Request ID to close: ');
   try {
-    manager.closeRequest(requestId, officerId);
+    await manager.closeRequest(requestId, officerId);
     console.log('Request closed.');
   } catch (err) {
     console.log(`Error: ${err.message}`);
@@ -401,6 +404,40 @@ async function viewRequestHistory() {
   });
 }
 
+function viewManagementReports() {
+  const byStatus = manager.reportRequestsByStatus();
+  const byCategory = manager.reportRequestsByCategory();
+  const byLocation = manager.reportVolumeByLocation();
+  const avgResolutionHours = manager.reportAverageResolutionHours();
+
+  console.log('\n--- Requests by Status ---');
+  Object.entries(byStatus).forEach(([status, count]) => console.log(`${status}: ${count}`));
+
+  console.log('\n--- Requests by Category ---');
+  Object.entries(byCategory).forEach(([category, count]) => console.log(`${category}: ${count}`));
+
+  console.log('\n--- Request Volume by Campus Location ---');
+  Object.entries(byLocation).forEach(([location, count]) => console.log(`${location}: ${count}`));
+
+  console.log('\n--- Average Resolution Time ---');
+  console.log(`${avgResolutionHours} hours (across Resolved/Closed requests)`);
+}
+
+function viewAuditLog() {
+  const auditLog = manager.getAuditLog();
+  if (auditLog.length === 0) {
+    console.log('No audit records yet.');
+    return;
+  }
+  auditLog.forEach((a) => {
+    const dateTime = a.dateTime instanceof Date ? a.dateTime.toISOString() : a.dateTime;
+    console.log(
+      `${a.auditId} | ${dateTime} | ${a.actionPerformed} | by ${a.actorId} (${a.actorRole}) ` +
+        `| Request: ${a.affectedRequestId || '-'} | ${a.description} | Result: ${a.result}`
+    );
+  });
+}
+
 async function start() {
   let running = true;
   while (running) {
@@ -463,14 +500,26 @@ async function start() {
         await viewRequestHistory();
         break;
       case '19':
+        viewManagementReports();
+        break;
+      case '20':
+        viewAuditLog();
+        break;
+      case '21':
         running = false;
         break;
       default:
-        console.log('Invalid option. Please select a number from 1 to 19.');
+        console.log('Invalid option. Please select a number from 1 to 21.');
     }
   }
   console.log('Goodbye.');
   rl.close();
 }
 
-start();
+manager
+  .loadData()
+  .then(start)
+  .catch((err) => {
+    console.error(`Failed to load saved data: ${err.message}`);
+    process.exit(1);
+  });

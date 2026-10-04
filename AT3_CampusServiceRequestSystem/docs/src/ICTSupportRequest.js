@@ -67,7 +67,7 @@ class ICTSupportRequest extends ServiceRequest {
    * score by one point above the base priority score.
    */
   calculatePriorityScore() {
-    const baseScore = super.calculatePriorityScore();
+    const baseScore = super.basePriorityScoreFromPriority();
     const impact = this.#networkImpact.toLowerCase();
     const isWidespread = impact.includes('campus-wide') || impact.includes('widespread');
     return isWidespread ? baseScore + 1 : baseScore;
@@ -78,7 +78,7 @@ class ICTSupportRequest extends ServiceRequest {
    * time compared to the base priority-driven target.
    */
   getTargetResolutionHours() {
-    const baseHours = super.getTargetResolutionHours();
+    const baseHours = super.baseTargetResolutionHoursFromPriority();
     const impact = this.#networkImpact.toLowerCase();
     const isWidespread = impact.includes('campus-wide') || impact.includes('widespread');
     return isWidespread ? Math.max(1, Math.round(baseHours / 2)) : baseHours;
@@ -89,10 +89,25 @@ class ICTSupportRequest extends ServiceRequest {
    */
   getRequestSummary() {
     return (
-      `${super.getRequestSummary()} ` +
+      `${super.baseRequestSummary()} ` +
       `| ICT Support - Device: ${this.#deviceType}, System: ${this.#systemName}, ` +
       `Fault: ${this.#faultType}, Network Impact: ${this.#networkImpact}`
     );
+  }
+
+  /**
+   * Overridden: adds ICT-specific fields for JSON persistence.
+   */
+  toJSON() {
+    return {
+      ...super.toJSON(),
+      specialisedData: {
+        deviceType: this.#deviceType,
+        systemName: this.#systemName,
+        faultType: this.#faultType,
+        networkImpact: this.#networkImpact,
+      },
+    };
   }
 }
 

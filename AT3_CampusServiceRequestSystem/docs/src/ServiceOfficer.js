@@ -23,6 +23,10 @@ class ServiceOfficer extends User {
   getServiceSection() {
     return this.#serviceSection;
   }
+
+  toJSON() {
+    return { ...super.toJSON(), specialisedData: { serviceSection: this.#serviceSection } };
+  }
 }
 
 module.exports = ServiceOfficer;
