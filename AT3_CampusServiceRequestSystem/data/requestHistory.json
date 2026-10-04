@@ -1,1 +1,112 @@
-[]
+[
+  {
+    "requestId": "REQ001",
+    "previousStatus": "Submitted",
+    "newStatus": "Reviewed",
+    "actionPerformed": "Review Request",
+    "actorId": "OFF001",
+    "actorRole": "ServiceOfficer",
+    "comment": "Priority set to High",
+    "dateTime": "2026-09-27T06:02:36.060Z"
+  },
+  {
+    "requestId": "REQ001",
+    "previousStatus": "Reviewed",
+    "newStatus": "Assigned",
+    "actionPerformed": "Assign Technician",
+    "actorId": "OFF001",
+    "actorRole": "ServiceOfficer",
+    "comment": "Assigned to Sam Kaupa (TECH001)",
+    "dateTime": "2026-09-27T06:02:36.061Z"
+  },
+  {
+    "requestId": "REQ001",
+    "previousStatus": "Assigned",
+    "newStatus": "In Progress",
+    "actionPerformed": "Begin Work",
+    "actorId": "TECH001",
+    "actorRole": "Technician",
+    "comment": "",
+    "dateTime": "2026-09-27T06:02:36.062Z"
+  },
+  {
+    "requestId": "REQ001",
+    "previousStatus": "In Progress",
+    "newStatus": "In Progress",
+    "actionPerformed": "Record Progress",
+    "actorId": "TECH001",
+    "actorRole": "Technician",
+    "comment": "Replaced faulty access point in Library Level 2.",
+    "dateTime": "2026-09-27T06:02:36.063Z"
+  },
+  {
+    "requestId": "REQ001",
+    "previousStatus": "In Progress",
+    "newStatus": "Resolved",
+    "actionPerformed": "Resolve Request",
+    "actorId": "TECH001",
+    "actorRole": "Technician",
+    "comment": "Access point replaced and connectivity tested OK.",
+    "dateTime": "2026-09-27T06:02:36.064Z"
+  },
+  {
+    "requestId": "REQ001",
+    "previousStatus": "Resolved",
+    "newStatus": "Closed",
+    "actionPerformed": "Close Request",
+    "actorId": "OFF001",
+    "actorRole": "ServiceOfficer",
+    "comment": "",
+    "dateTime": "2026-09-27T06:02:36.064Z"
+  },
+  {
+    "requestId": "REQ002",
+    "previousStatus": "Submitted",
+    "newStatus": "Reviewed",
+    "actionPerformed": "Review Request",
+    "actorId": "OFF001",
+    "actorRole": "ServiceOfficer",
+    "comment": "Priority set to High",
+    "dateTime": "2026-09-27T06:02:36.066Z"
+  },
+  {
+    "requestId": "REQ002",
+    "previousStatus": "Reviewed",
+    "newStatus": "Assigned",
+    "actionPerformed": "Assign Technician",
+    "actorId": "OFF001",
+    "actorRole": "ServiceOfficer",
+    "comment": "Assigned to Ray Nou (TECH002)",
+    "dateTime": "2026-09-27T06:02:36.066Z"
+  },
+  {
+    "requestId": "REQ002",
+    "previousStatus": "Assigned",
+    "newStatus": "In Progress",
+    "actionPerformed": "Begin Work",
+    "actorId": "TECH002",
+    "actorRole": "Technician",
+    "comment": "",
+    "dateTime": "2026-09-27T06:02:36.067Z"
+  },
+  {
+    "requestId": "REQ003",
+    "previousStatus": "Submitted",
+    "newStatus": "Reviewed",
+    "actionPerformed": "Review Request",
+    "actorId": "OFF001",
+    "actorRole": "ServiceOfficer",
+    "comment": "Priority set to Urgent",
+    "dateTime": "2026-09-27T06:02:36.068Z"
+  },
+  {
+    "requestId": "REQ005",
+    "previousStatus": "Submitted",
+    "newStatus": "Cancelled",
+    "actionPerformed": "Cancel Request",
+    "actorId": "DWU2026001",
+    "actorRole": "StudentRequester",
+    "comment": "",
+    "dateTime": "2026-09-27T06:02:36.071Z"
+  }
+]

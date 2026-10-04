@@ -1,1 +1,64 @@
-[]
+[
+  {
+    "userType": "StudentRequester",
+    "userId": "DWU2026001",
+    "firstName": "John",
+    "lastName": "Doe",
+    "email": "john.doe@example.com",
+    "specialisedData": {
+      "programme": "BIS",
+      "yearLevel": "3"
+    }
+  },
+  {
+    "userType": "StudentRequester",
+    "userId": "DWU2026002",
+    "firstName": "Mary",
+    "lastName": "Kila",
+    "email": "mary.kila@example.com",
+    "specialisedData": {
+      "programme": "BIT",
+      "yearLevel": "2"
+    }
+  },
+  {
+    "userType": "StaffRequester",
+    "userId": "DWU-S001",
+    "firstName": "Paul",
+    "lastName": "Aisi",
+    "email": "paul.aisi@example.com",
+    "specialisedData": {
+      "department": "Registrar"
+    }
+  },
+  {
+    "userType": "ServiceOfficer",
+    "userId": "OFF001",
+    "firstName": "Grace",
+    "lastName": "Tau",
+    "email": "grace.tau@example.com",
+    "specialisedData": {
+      "serviceSection": "Facilities"
+    }
+  },
+  {
+    "userType": "Technician",
+    "userId": "TECH001",
+    "firstName": "Sam",
+    "lastName": "Kaupa",
+    "email": "sam.kaupa@example.com",
+    "specialisedData": {
+      "technicalSpeciality": "Networking"
+    }
+  },
+  {
+    "userType": "Technician",
+    "userId": "TECH002",
+    "firstName": "Ray",
+    "lastName": "Nou",
+    "email": "ray.nou@example.com",
+    "specialisedData": {
+      "technicalSpeciality": "Plumbing"
+    }
+  }
+]

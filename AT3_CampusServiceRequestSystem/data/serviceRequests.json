@@ -1,1 +1,97 @@
-[]
+[
+  {
+    "requestType": "ICTSupportRequest",
+    "requestId": "REQ001",
+    "requesterId": "DWU2026001",
+    "title": "Unable to access campus Wi-Fi",
+    "description": "Wi-Fi drops every few minutes in the library.",
+    "campusLocation": "Library Level 2",
+    "category": "ICT Support",
+    "priority": "High",
+    "status": "Closed",
+    "assignedTechnicianId": "TECH001",
+    "dateSubmitted": "2026-09-27T06:02:36.059Z",
+    "dateUpdated": "2026-09-27T06:02:36.064Z",
+    "specialisedData": {
+      "deviceType": "Laptop",
+      "systemName": "Campus Wi-Fi",
+      "faultType": "Connectivity",
+      "networkImpact": "Campus-wide outage"
+    }
+  },
+  {
+    "requestType": "MaintenanceRequest",
+    "requestId": "REQ002",
+    "requesterId": "DWU-S001",
+    "title": "Broken air conditioner",
+    "description": "AC unit leaking water onto the floor.",
+    "campusLocation": "Admin Block, Room 12",
+    "category": "Facilities Maintenance",
+    "priority": "High",
+    "status": "In Progress",
+    "assignedTechnicianId": "TECH002",
+    "dateSubmitted": "2026-09-27T06:02:36.065Z",
+    "dateUpdated": "2026-09-27T06:02:36.067Z",
+    "specialisedData": {
+      "building": "Admin Block",
+      "roomNumber": "12",
+      "hazardLevel": "Medium",
+      "equipmentAffected": "Air conditioner"
+    }
+  },
+  {
+    "requestType": "CleaningRequest",
+    "requestId": "REQ003",
+    "requesterId": "DWU2026002",
+    "title": "Cafeteria spill",
+    "description": "Large spill near the food counter, slip hazard.",
+    "campusLocation": "Cafeteria",
+    "category": "Cleaning and Sanitation",
+    "priority": "Urgent",
+    "status": "Reviewed",
+    "assignedTechnicianId": null,
+    "dateSubmitted": "2026-09-27T06:02:36.068Z",
+    "dateUpdated": "2026-09-27T06:02:36.068Z",
+    "specialisedData": {
+      "cleaningArea": "Cafeteria",
+      "hygieneRisk": "High",
+      "serviceType": "Spill cleanup",
+      "preferredServiceTime": "Morning"
+    }
+  },
+  {
+    "requestType": "GeneralServiceRequest",
+    "requestId": "REQ004",
+    "requesterId": "DWU2026002",
+    "title": "Broken bench outside library",
+    "description": "Wooden bench near the entrance is broken.",
+    "campusLocation": "Library Entrance",
+    "category": "General Campus Service",
+    "priority": "Low",
+    "status": "Submitted",
+    "assignedTechnicianId": null,
+    "dateSubmitted": "2026-09-27T06:02:36.069Z",
+    "dateUpdated": "2026-09-27T06:02:36.069Z",
+    "specialisedData": {}
+  },
+  {
+    "requestType": "ICTSupportRequest",
+    "requestId": "REQ005",
+    "requesterId": "DWU2026001",
+    "title": "Printer not working",
+    "description": "Printer in the computer lab shows an error.",
+    "campusLocation": "Computer Lab 1",
+    "category": "ICT Support",
+    "priority": "Low",
+    "status": "Cancelled",
+    "assignedTechnicianId": null,
+    "dateSubmitted": "2026-09-27T06:02:36.070Z",
+    "dateUpdated": "2026-09-27T06:02:36.071Z",
+    "specialisedData": {
+      "deviceType": "Printer",
+      "systemName": "Lab Printer 1",
+      "faultType": "Hardware fault",
+      "networkImpact": "None"
+    }
+  }
+]

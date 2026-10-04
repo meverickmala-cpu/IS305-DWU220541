@@ -1,1 +1,222 @@
-[]
+[
+  {
+    "auditId": "AUD0001",
+    "actorId": "DWU2026001",
+    "actorRole": "StudentRequester",
+    "actionPerformed": "Register User",
+    "affectedRequestId": null,
+    "description": "Registered as StudentRequester",
+    "dateTime": "2026-09-27T06:02:36.055Z",
+    "result": "Success"
+  },
+  {
+    "auditId": "AUD0002",
+    "actorId": "DWU2026002",
+    "actorRole": "StudentRequester",
+    "actionPerformed": "Register User",
+    "affectedRequestId": null,
+    "description": "Registered as StudentRequester",
+    "dateTime": "2026-09-27T06:02:36.056Z",
+    "result": "Success"
+  },
+  {
+    "auditId": "AUD0003",
+    "actorId": "DWU-S001",
+    "actorRole": "StaffRequester",
+    "actionPerformed": "Register User",
+    "affectedRequestId": null,
+    "description": "Registered as StaffRequester",
+    "dateTime": "2026-09-27T06:02:36.056Z",
+    "result": "Success"
+  },
+  {
+    "auditId": "AUD0004",
+    "actorId": "OFF001",
+    "actorRole": "ServiceOfficer",
+    "actionPerformed": "Register User",
+    "affectedRequestId": null,
+    "description": "Registered as ServiceOfficer",
+    "dateTime": "2026-09-27T06:02:36.057Z",
+    "result": "Success"
+  },
+  {
+    "auditId": "AUD0005",
+    "actorId": "TECH001",
+    "actorRole": "Technician",
+    "actionPerformed": "Register User",
+    "affectedRequestId": null,
+    "description": "Registered as Technician",
+    "dateTime": "2026-09-27T06:02:36.058Z",
+    "result": "Success"
+  },
+  {
+    "auditId": "AUD0006",
+    "actorId": "TECH002",
+    "actorRole": "Technician",
+    "actionPerformed": "Register User",
+    "affectedRequestId": null,
+    "description": "Registered as Technician",
+    "dateTime": "2026-09-27T06:02:36.058Z",
+    "result": "Success"
+  },
+  {
+    "auditId": "AUD0007",
+    "actorId": "DWU2026001",
+    "actorRole": "StudentRequester",
+    "actionPerformed": "Request Creation",
+    "affectedRequestId": "REQ001",
+    "description": "Unable to access campus Wi-Fi",
+    "dateTime": "2026-09-27T06:02:36.059Z",
+    "result": "Success"
+  },
+  {
+    "auditId": "AUD0008",
+    "actorId": "OFF001",
+    "actorRole": "ServiceOfficer",
+    "actionPerformed": "Priority Change",
+    "affectedRequestId": "REQ001",
+    "description": "Priority set to High",
+    "dateTime": "2026-09-27T06:02:36.060Z",
+    "result": "Success"
+  },
+  {
+    "auditId": "AUD0009",
+    "actorId": "OFF001",
+    "actorRole": "ServiceOfficer",
+    "actionPerformed": "Technician Assignment",
+    "affectedRequestId": "REQ001",
+    "description": "Assigned to TECH001",
+    "dateTime": "2026-09-27T06:02:36.061Z",
+    "result": "Success"
+  },
+  {
+    "auditId": "AUD0010",
+    "actorId": "TECH001",
+    "actorRole": "Technician",
+    "actionPerformed": "Status Change",
+    "affectedRequestId": "REQ001",
+    "description": "Work started",
+    "dateTime": "2026-09-27T06:02:36.062Z",
+    "result": "Success"
+  },
+  {
+    "auditId": "AUD0011",
+    "actorId": "TECH001",
+    "actorRole": "Technician",
+    "actionPerformed": "Request Update",
+    "affectedRequestId": "REQ001",
+    "description": "Replaced faulty access point in Library Level 2.",
+    "dateTime": "2026-09-27T06:02:36.063Z",
+    "result": "Success"
+  },
+  {
+    "auditId": "AUD0012",
+    "actorId": "TECH001",
+    "actorRole": "Technician",
+    "actionPerformed": "Resolution",
+    "affectedRequestId": "REQ001",
+    "description": "Access point replaced and connectivity tested OK.",
+    "dateTime": "2026-09-27T06:02:36.064Z",
+    "result": "Success"
+  },
+  {
+    "auditId": "AUD0013",
+    "actorId": "OFF001",
+    "actorRole": "ServiceOfficer",
+    "actionPerformed": "Closure",
+    "affectedRequestId": "REQ001",
+    "description": "",
+    "dateTime": "2026-09-27T06:02:36.064Z",
+    "result": "Success"
+  },
+  {
+    "auditId": "AUD0014",
+    "actorId": "DWU-S001",
+    "actorRole": "StaffRequester",
+    "actionPerformed": "Request Creation",
+    "affectedRequestId": "REQ002",
+    "description": "Broken air conditioner",
+    "dateTime": "2026-09-27T06:02:36.065Z",
+    "result": "Success"
+  },
+  {
+    "auditId": "AUD0015",
+    "actorId": "OFF001",
+    "actorRole": "ServiceOfficer",
+    "actionPerformed": "Priority Change",
+    "affectedRequestId": "REQ002",
+    "description": "Priority set to High",
+    "dateTime": "2026-09-27T06:02:36.066Z",
+    "result": "Success"
+  },
+  {
+    "auditId": "AUD0016",
+    "actorId": "OFF001",
+    "actorRole": "ServiceOfficer",
+    "actionPerformed": "Technician Assignment",
+    "affectedRequestId": "REQ002",
+    "description": "Assigned to TECH002",
+    "dateTime": "2026-09-27T06:02:36.066Z",
+    "result": "Success"
+  },
+  {
+    "auditId": "AUD0017",
+    "actorId": "TECH002",
+    "actorRole": "Technician",
+    "actionPerformed": "Status Change",
+    "affectedRequestId": "REQ002",
+    "description": "Work started",
+    "dateTime": "2026-09-27T06:02:36.067Z",
+    "result": "Success"
+  },
+  {
+    "auditId": "AUD0018",
+    "actorId": "DWU2026002",
+    "actorRole": "StudentRequester",
+    "actionPerformed": "Request Creation",
+    "affectedRequestId": "REQ003",
+    "description": "Cafeteria spill",
+    "dateTime": "2026-09-27T06:02:36.068Z",
+    "result": "Success"
+  },
+  {
+    "auditId": "AUD0019",
+    "actorId": "OFF001",
+    "actorRole": "ServiceOfficer",
+    "actionPerformed": "Priority Change",
+    "affectedRequestId": "REQ003",
+    "description": "Priority set to Urgent",
+    "dateTime": "2026-09-27T06:02:36.068Z",
+    "result": "Success"
+  },
+  {
+    "auditId": "AUD0020",
+    "actorId": "DWU2026002",
+    "actorRole": "StudentRequester",
+    "actionPerformed": "Request Creation",
+    "affectedRequestId": "REQ004",
+    "description": "Broken bench outside library",
+    "dateTime": "2026-09-27T06:02:36.069Z",
+    "result": "Success"
+  },
+  {
+    "auditId": "AUD0021",
+    "actorId": "DWU2026001",
+    "actorRole": "StudentRequester",
+    "actionPerformed": "Request Creation",
+    "affectedRequestId": "REQ005",
+    "description": "Printer not working",
+    "dateTime": "2026-09-27T06:02:36.070Z",
+    "result": "Success"
+  },
+  {
+    "auditId": "AUD0022",
+    "actorId": "DWU2026001",
+    "actorRole": "StudentRequester",
+    "actionPerformed": "Cancellation",
+    "affectedRequestId": "REQ005",
+    "description": "",
+    "dateTime": "2026-09-27T06:02:36.071Z",
+    "result": "Success"
+  }
+]
