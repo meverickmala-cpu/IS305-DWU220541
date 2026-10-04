@@ -7,7 +7,16 @@
  * setters, getFullName(), validate(), displayInfo().
  */
 
-const VALID_USER_TYPES = ['Requester', 'ServiceOfficer', 'Technician', 'Administrator'];
+// Updated at Credit level to match the specialised User subclasses
+// (StudentRequester, StaffRequester, ServiceOfficer, Technician) introduced
+// by the Credit Extension, plus Administrator from the system's Main Users.
+const VALID_USER_TYPES = [
+  'StudentRequester',
+  'StaffRequester',
+  'ServiceOfficer',
+  'Technician',
+  'Administrator',
+];
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 class User {
