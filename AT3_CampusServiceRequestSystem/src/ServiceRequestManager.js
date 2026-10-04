@@ -73,6 +73,95 @@ class ServiceRequestManager {
     return request;
   }
 
+  // --- Credit workflow: review, assign, work, resolve, close ---
+
+  reviewRequest(requestId, officerId, priority) {
+    const request = this.#getRequestOrThrow(requestId);
+    const officer = this.#getUserOrThrow(officerId);
+    request.reviewRequest(officer, priority);
+    return request;
+  }
+
+  assignTechnician(requestId, officerId, technicianId) {
+    const request = this.#getRequestOrThrow(requestId);
+    const officer = this.#getUserOrThrow(officerId);
+    const technician = this.#getUserOrThrow(technicianId);
+    request.assignTechnician(officer, technician);
+    return request;
+  }
+
+  beginWork(requestId, technicianId) {
+    const request = this.#getRequestOrThrow(requestId);
+    const technician = this.#getUserOrThrow(technicianId);
+    request.beginWork(technician);
+    return request;
+  }
+
+  recordProgress(requestId, technicianId, note) {
+    const request = this.#getRequestOrThrow(requestId);
+    const technician = this.#getUserOrThrow(technicianId);
+    request.recordProgress(technician, note);
+    return request;
+  }
+
+  resolveRequest(requestId, technicianId, notes) {
+    const request = this.#getRequestOrThrow(requestId);
+    const technician = this.#getUserOrThrow(technicianId);
+    request.resolveRequest(technician, notes);
+    return request;
+  }
+
+  closeRequest(requestId, officerId) {
+    const request = this.#getRequestOrThrow(requestId);
+    const officer = this.#getUserOrThrow(officerId);
+    request.closeRequest(officer);
+    return request;
+  }
+
+  #getRequestOrThrow(requestId) {
+    const request = this.findRequestById(requestId);
+    if (!request) {
+      throw new Error(`No request found with ID "${requestId}".`);
+    }
+    return request;
+  }
+
+  #getUserOrThrow(userId) {
+    const user = this.findUserById(userId);
+    if (!user) {
+      throw new Error(`No user found with ID "${userId}".`);
+    }
+    return user;
+  }
+
+  // --- Credit: filtering and sorting ---
+
+  filterByCategory(category) {
+    return this.#requests.filter((r) => r.getCategory() === category);
+  }
+
+  filterByStatus(status) {
+    return this.#requests.filter((r) => r.getStatus() === status);
+  }
+
+  filterByPriority(priority) {
+    return this.#requests.filter((r) => r.getPriority() === priority);
+  }
+
+  filterByTechnician(technicianId) {
+    return this.#requests.filter(
+      (r) => r.getAssignedTechnician() && r.getAssignedTechnician().getUserId() === technicianId
+    );
+  }
+
+  sortByDateSubmitted(requests = this.#requests) {
+    return [...requests].sort((a, b) => a.getDateSubmitted() - b.getDateSubmitted());
+  }
+
+  sortByPriority(requests = this.#requests) {
+    return [...requests].sort((a, b) => b.calculatePriorityScore() - a.calculatePriorityScore());
+  }
+
   searchRequests(searchText) {
     const text = (searchText || '').toLowerCase();
     return this.#requests.filter(

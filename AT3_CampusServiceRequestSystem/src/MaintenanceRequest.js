@@ -61,6 +61,39 @@ class MaintenanceRequest extends ServiceRequest {
   getEquipmentAffected() {
     return this.#equipmentAffected;
   }
+
+  /**
+   * Overridden: a High hazard level raises the effective priority score
+   * to the maximum (Urgent-equivalent), since safety issues take
+   * precedence over the originally selected priority.
+   */
+  calculatePriorityScore() {
+    const baseScore = super.calculatePriorityScore();
+    return this.#hazardLevel === 'High' ? 4 : baseScore;
+  }
+
+  /**
+   * Overridden: a High hazard level forces a short target resolution
+   * time regardless of the base priority-driven target.
+   */
+  getTargetResolutionHours() {
+    if (this.#hazardLevel === 'High') {
+      return 2;
+    }
+    return super.getTargetResolutionHours();
+  }
+
+  /**
+   * Overridden: adds Facilities Maintenance-specific detail to the base
+   * summary.
+   */
+  getRequestSummary() {
+    return (
+      `${super.getRequestSummary()} ` +
+      `| Maintenance - Building: ${this.#building}, Room: ${this.#roomNumber}, ` +
+      `Hazard: ${this.#hazardLevel}, Equipment: ${this.#equipmentAffected}`
+    );
+  }
 }
 
 module.exports = MaintenanceRequest;

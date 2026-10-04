@@ -1,14 +1,17 @@
 'use strict';
 
+const ServiceOfficer = require('./ServiceOfficer.js');
+const Technician = require('./Technician.js');
+
 /**
  * ServiceRequest Class
  * Represents a campus service request submitted by a Requester.
  * Pass-level requirements: private fields, constructor, getters, controlled
  * setters, validate(), updateDetails(), cancelRequest(), getRequestSummary().
  *
- * Note: at Pass level only the Submitted and Cancelled statuses are used.
- * The full Submitted -> Reviewed -> Assigned -> In Progress -> Resolved ->
- * Closed workflow is introduced in the Credit Extension.
+ * Credit Extension adds: the full controlled status workflow, role-based
+ * permissions, a request history array, and overridable
+ * calculatePriorityScore() / getTargetResolutionHours() methods.
  */
 
 const REQUIRED_CATEGORIES = [
@@ -22,6 +25,20 @@ const VALID_PRIORITIES = ['Low', 'Medium', 'High', 'Urgent'];
 
 const PASS_STATUSES = ['Submitted', 'Cancelled'];
 
+// Full Credit-level status workflow.
+const FULL_STATUSES = [
+  'Submitted',
+  'Reviewed',
+  'Assigned',
+  'In Progress',
+  'Resolved',
+  'Closed',
+  'Cancelled',
+];
+
+const PRIORITY_SCORES = { Low: 1, Medium: 2, High: 3, Urgent: 4 };
+const PRIORITY_TARGET_HOURS = { Low: 72, Medium: 48, High: 24, Urgent: 4 };
+
 class ServiceRequest {
   #requestId;
   #requester;
@@ -33,6 +50,8 @@ class ServiceRequest {
   #status;
   #dateSubmitted;
   #dateUpdated;
+  #assignedTechnician;
+  #history;
 
   /**
    * @param {Object} commonRequestData
@@ -57,6 +76,8 @@ class ServiceRequest {
     this.#status = 'Submitted';
     this.#dateSubmitted = new Date();
     this.#dateUpdated = new Date();
+    this.#assignedTechnician = null;
+    this.#history = [];
   }
 
   // Getters
@@ -98,6 +119,30 @@ class ServiceRequest {
 
   getDateUpdated() {
     return this.#dateUpdated;
+  }
+
+  getAssignedTechnician() {
+    return this.#assignedTechnician;
+  }
+
+  getHistory() {
+    return [...this.#history];
+  }
+
+  /**
+   * Records a request history entry. Internal helper used by every
+   * status-changing / workflow action.
+   */
+  #addHistoryEntry(previousStatus, newStatus, actionPerformed, actor, comment) {
+    this.#history.push({
+      previousStatus,
+      newStatus,
+      actionPerformed,
+      actorId: actor.getUserId(),
+      actorRole: actor.getUserType(),
+      comment: comment || '',
+      dateTime: new Date(),
+    });
   }
 
   /**
@@ -174,8 +219,146 @@ class ServiceRequest {
     if (this.#status !== 'Submitted') {
       throw new Error(`Request cannot be cancelled while status is "${this.#status}".`);
     }
+    const previousStatus = this.#status;
     this.#status = 'Cancelled';
     this.#dateUpdated = new Date();
+    this.#addHistoryEntry(previousStatus, this.#status, 'Cancel Request', this.#requester, '');
+  }
+
+  /**
+   * Service Officer reviews a Submitted request and sets its priority.
+   */
+  reviewRequest(officer, priority) {
+    if (!(officer instanceof ServiceOfficer)) {
+      throw new Error('Only a Service Officer may review a request.');
+    }
+    if (this.#status !== 'Submitted') {
+      throw new Error(`Request cannot be reviewed while status is "${this.#status}".`);
+    }
+    if (!VALID_PRIORITIES.includes(priority)) {
+      throw new Error(`Unsupported priority: ${priority}`);
+    }
+    const previousStatus = this.#status;
+    this.#priority = priority;
+    this.#status = 'Reviewed';
+    this.#dateUpdated = new Date();
+    this.#addHistoryEntry(
+      previousStatus,
+      this.#status,
+      'Review Request',
+      officer,
+      `Priority set to ${priority}`
+    );
+  }
+
+  /**
+   * Service Officer assigns a Technician to a Reviewed request.
+   */
+  assignTechnician(officer, technician) {
+    if (!(officer instanceof ServiceOfficer)) {
+      throw new Error('Only a Service Officer may assign a Technician.');
+    }
+    if (!(technician instanceof Technician)) {
+      throw new Error('The assignee must be a Technician.');
+    }
+    if (this.#status !== 'Reviewed') {
+      throw new Error(`Request cannot be assigned while status is "${this.#status}".`);
+    }
+    const previousStatus = this.#status;
+    this.#assignedTechnician = technician;
+    this.#status = 'Assigned';
+    this.#dateUpdated = new Date();
+    this.#addHistoryEntry(
+      previousStatus,
+      this.#status,
+      'Assign Technician',
+      officer,
+      `Assigned to ${technician.getFullName()} (${technician.getUserId()})`
+    );
+  }
+
+  /**
+   * Assigned Technician begins work on an Assigned request.
+   */
+  beginWork(technician) {
+    this.#assertIsAssignedTechnician(technician);
+    if (this.#status !== 'Assigned') {
+      throw new Error(`Work cannot begin while status is "${this.#status}".`);
+    }
+    const previousStatus = this.#status;
+    this.#status = 'In Progress';
+    this.#dateUpdated = new Date();
+    this.#addHistoryEntry(previousStatus, this.#status, 'Begin Work', technician, '');
+  }
+
+  /**
+   * Assigned Technician records a progress note while work is In Progress.
+   * Does not change the request's status.
+   */
+  recordProgress(technician, note) {
+    this.#assertIsAssignedTechnician(technician);
+    if (this.#status !== 'In Progress') {
+      throw new Error(`Progress cannot be recorded while status is "${this.#status}".`);
+    }
+    this.#dateUpdated = new Date();
+    this.#addHistoryEntry(this.#status, this.#status, 'Record Progress', technician, note);
+  }
+
+  /**
+   * Assigned Technician resolves an In Progress request.
+   */
+  resolveRequest(technician, notes) {
+    this.#assertIsAssignedTechnician(technician);
+    if (this.#status !== 'In Progress') {
+      throw new Error(`Request cannot be resolved while status is "${this.#status}".`);
+    }
+    const previousStatus = this.#status;
+    this.#status = 'Resolved';
+    this.#dateUpdated = new Date();
+    this.#addHistoryEntry(previousStatus, this.#status, 'Resolve Request', technician, notes || '');
+  }
+
+  /**
+   * Service Officer verifies and closes a Resolved request.
+   */
+  closeRequest(officer) {
+    if (!(officer instanceof ServiceOfficer)) {
+      throw new Error('Only a Service Officer may close a request.');
+    }
+    if (this.#status !== 'Resolved') {
+      throw new Error(`Request cannot be closed while status is "${this.#status}".`);
+    }
+    const previousStatus = this.#status;
+    this.#status = 'Closed';
+    this.#dateUpdated = new Date();
+    this.#addHistoryEntry(previousStatus, this.#status, 'Close Request', officer, '');
+  }
+
+  #assertIsAssignedTechnician(technician) {
+    if (!(technician instanceof Technician)) {
+      throw new Error('Only a Technician may perform this action.');
+    }
+    if (!this.#assignedTechnician || this.#assignedTechnician.getUserId() !== technician.getUserId()) {
+      throw new Error('Only the assigned Technician may perform this action.');
+    }
+  }
+
+  /**
+   * Calculates a numeric priority score from the request's priority level.
+   * Base implementation; specialised request classes override this to
+   * factor in their own risk/impact fields.
+   */
+  calculatePriorityScore() {
+    return PRIORITY_SCORES[this.#priority] || 0;
+  }
+
+  /**
+   * Returns the target resolution time, in hours, based on priority.
+   * Base implementation; specialised request classes override this to
+   * factor in their own risk/impact fields.
+   */
+  getTargetResolutionHours() {
+    return PRIORITY_TARGET_HOURS[this.#priority] || 48;
   }
 
   getRequestSummary() {
@@ -190,3 +373,4 @@ module.exports = ServiceRequest;
 module.exports.REQUIRED_CATEGORIES = REQUIRED_CATEGORIES;
 module.exports.VALID_PRIORITIES = VALID_PRIORITIES;
 module.exports.PASS_STATUSES = PASS_STATUSES;
+module.exports.FULL_STATUSES = FULL_STATUSES;
