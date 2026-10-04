@@ -2,7 +2,7 @@
 
 **Course:** IS305 – Object-Oriented Programming
 **Assessment:** AT3 Major Project
-**Student:** Vincent
+**Student:** Vincent MALA
 **Student ID:** 220541
 **GitHub Repository:** https://github.com/meverickmala-cpu/IS305-DWU220541.git
 
