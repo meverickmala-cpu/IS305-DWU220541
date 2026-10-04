@@ -23,6 +23,13 @@ class Technician extends User {
   getTechnicalSpeciality() {
     return this.#technicalSpeciality;
   }
+
+  toJSON() {
+    return {
+      ...super.toJSON(),
+      specialisedData: { technicalSpeciality: this.#technicalSpeciality },
+    };
+  }
 }
 
 module.exports = Technician;

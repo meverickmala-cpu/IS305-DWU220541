@@ -68,7 +68,7 @@ class MaintenanceRequest extends ServiceRequest {
    * precedence over the originally selected priority.
    */
   calculatePriorityScore() {
-    const baseScore = super.calculatePriorityScore();
+    const baseScore = super.basePriorityScoreFromPriority();
     return this.#hazardLevel === 'High' ? 4 : baseScore;
   }
 
@@ -80,7 +80,7 @@ class MaintenanceRequest extends ServiceRequest {
     if (this.#hazardLevel === 'High') {
       return 2;
     }
-    return super.getTargetResolutionHours();
+    return super.baseTargetResolutionHoursFromPriority();
   }
 
   /**
@@ -89,10 +89,25 @@ class MaintenanceRequest extends ServiceRequest {
    */
   getRequestSummary() {
     return (
-      `${super.getRequestSummary()} ` +
+      `${super.baseRequestSummary()} ` +
       `| Maintenance - Building: ${this.#building}, Room: ${this.#roomNumber}, ` +
       `Hazard: ${this.#hazardLevel}, Equipment: ${this.#equipmentAffected}`
     );
+  }
+
+  /**
+   * Overridden: adds Maintenance-specific fields for JSON persistence.
+   */
+  toJSON() {
+    return {
+      ...super.toJSON(),
+      specialisedData: {
+        building: this.#building,
+        roomNumber: this.#roomNumber,
+        hazardLevel: this.#hazardLevel,
+        equipmentAffected: this.#equipmentAffected,
+      },
+    };
   }
 }
 

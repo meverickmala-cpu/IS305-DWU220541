@@ -32,6 +32,13 @@ class StudentRequester extends User {
   getYearLevel() {
     return this.#yearLevel;
   }
+
+  toJSON() {
+    return {
+      ...super.toJSON(),
+      specialisedData: { programme: this.#programme, yearLevel: this.#yearLevel },
+    };
+  }
 }
 
 module.exports = StudentRequester;

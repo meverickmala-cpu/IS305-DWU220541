@@ -115,6 +115,21 @@ class User {
       `User Type: ${this.#userType}`
     );
   }
+
+  /**
+   * Plain-object representation, suitable for JSON persistence. Subclasses
+   * override this to add their specialised fields, calling super.toJSON()
+   * first.
+   */
+  toJSON() {
+    return {
+      userType: this.#userType,
+      userId: this.#userId,
+      firstName: this.#firstName,
+      lastName: this.#lastName,
+      email: this.#email,
+    };
+  }
 }
 
 module.exports = User;
