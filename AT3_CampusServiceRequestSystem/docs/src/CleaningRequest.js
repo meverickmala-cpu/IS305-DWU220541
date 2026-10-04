@@ -61,6 +61,37 @@ class CleaningRequest extends ServiceRequest {
   getPreferredServiceTime() {
     return this.#preferredServiceTime;
   }
+
+  /**
+   * Overridden: a High hygiene risk raises the effective priority score
+   * by one point above the base priority score.
+   */
+  calculatePriorityScore() {
+    const baseScore = super.calculatePriorityScore();
+    return this.#hygieneRisk === 'High' ? baseScore + 1 : baseScore;
+  }
+
+  /**
+   * Overridden: a High hygiene risk shortens the target resolution time
+   * compared to the base priority-driven target.
+   */
+  getTargetResolutionHours() {
+    if (this.#hygieneRisk === 'High') {
+      return Math.min(4, super.getTargetResolutionHours());
+    }
+    return super.getTargetResolutionHours();
+  }
+
+  /**
+   * Overridden: adds Cleaning-specific detail to the base summary.
+   */
+  getRequestSummary() {
+    return (
+      `${super.getRequestSummary()} ` +
+      `| Cleaning - Area: ${this.#cleaningArea}, Hygiene Risk: ${this.#hygieneRisk}, ` +
+      `Service Type: ${this.#serviceType}, Preferred Time: ${this.#preferredServiceTime}`
+    );
+  }
 }
 
 module.exports = CleaningRequest;

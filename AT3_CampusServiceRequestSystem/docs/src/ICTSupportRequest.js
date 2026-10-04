@@ -61,6 +61,39 @@ class ICTSupportRequest extends ServiceRequest {
   getNetworkImpact() {
     return this.#networkImpact;
   }
+
+  /**
+   * Overridden: widespread network impact raises the effective priority
+   * score by one point above the base priority score.
+   */
+  calculatePriorityScore() {
+    const baseScore = super.calculatePriorityScore();
+    const impact = this.#networkImpact.toLowerCase();
+    const isWidespread = impact.includes('campus-wide') || impact.includes('widespread');
+    return isWidespread ? baseScore + 1 : baseScore;
+  }
+
+  /**
+   * Overridden: widespread network impact halves the target resolution
+   * time compared to the base priority-driven target.
+   */
+  getTargetResolutionHours() {
+    const baseHours = super.getTargetResolutionHours();
+    const impact = this.#networkImpact.toLowerCase();
+    const isWidespread = impact.includes('campus-wide') || impact.includes('widespread');
+    return isWidespread ? Math.max(1, Math.round(baseHours / 2)) : baseHours;
+  }
+
+  /**
+   * Overridden: adds ICT-specific detail to the base summary.
+   */
+  getRequestSummary() {
+    return (
+      `${super.getRequestSummary()} ` +
+      `| ICT Support - Device: ${this.#deviceType}, System: ${this.#systemName}, ` +
+      `Fault: ${this.#faultType}, Network Impact: ${this.#networkImpact}`
+    );
+  }
 }
 
 module.exports = ICTSupportRequest;
