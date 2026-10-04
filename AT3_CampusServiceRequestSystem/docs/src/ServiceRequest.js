@@ -34,7 +34,19 @@ class ServiceRequest {
   #dateSubmitted;
   #dateUpdated;
 
-  constructor(requestId, requester, title, description, campusLocation, category, priority) {
+  /**
+   * @param {Object} commonRequestData
+   * @param {string} commonRequestData.requestId
+   * @param {User} commonRequestData.requester
+   * @param {string} commonRequestData.title
+   * @param {string} commonRequestData.description
+   * @param {string} commonRequestData.campusLocation
+   * @param {string} commonRequestData.category
+   * @param {string} commonRequestData.priority
+   */
+  constructor(commonRequestData) {
+    const { requestId, requester, title, description, campusLocation, category, priority } =
+      commonRequestData;
     this.#requestId = requestId;
     this.#requester = requester;
     this.#title = title;
