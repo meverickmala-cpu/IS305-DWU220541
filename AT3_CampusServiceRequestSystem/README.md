@@ -4,7 +4,7 @@
 **Assessment:** AT3 Major Project
 **Student:** Vincent
 **Student ID:** 220541
-**GitHub Repository:** IS305-220541 *(update with actual URL once created)*
+**GitHub Repository:** https://github.com/meverickmala-cpu/IS305-DWU220541.git*
 
 ## Project Description
 
