@@ -1,4 +1,4 @@
-# IS305 – Object-Oriented Programming Labs
+# IS305 – Object-Oriented Programming Labs and Major Project
 
 **Student Name:** Vincent MALA
 **Student ID:** 220541
